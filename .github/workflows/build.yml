@@ -1,1 +1,34 @@
 
+name: Build APK
+
+on:
+  push:
+    branches:
+      - main # Déclencher le workflow lors d'un push sur la branche principale (changez selon votre configuration)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Utiliser l'image Ubuntu la plus récente
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2 # Récupérer le code source
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y python3-pip build-essential git
+        pip3 install buildozer
+        buildozer init
+      working-directory: ./path/to/your/app # Spécifiez le chemin vers votre application
+
+    - name: Build APK
+      run: buildozer -v android debug
+      working-directory: ./path/to/your/app # Spécifiez le chemin vers votre application
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: my-app # Nom de l'artefact
+        path: ./path/to/your/app/bin # Spécifiez le chemin vers le répertoire contenant l'APK généré
+
